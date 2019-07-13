@@ -25,5 +25,5 @@ dotnet run
 
 deploy and setup the Webhook URL with:
 ```
-https://your_domain_//api/LineBot_
+https://your_domain_/api/LineBot
 ```
