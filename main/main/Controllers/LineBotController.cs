@@ -100,7 +100,7 @@ namespace main.Controllers
             }
             catch (Exception ex)
             {
-                //回覆訊息
+                //如果有錯誤，push給admin
                 bot.PushMessage(AdminUserId.Value, "Exception : \n" + ex.Message);
                 //response OK
                 return Ok();
