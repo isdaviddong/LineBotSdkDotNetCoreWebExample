@@ -29,6 +29,9 @@ namespace main.Controllers
             //create vot instance
             var bot = new isRock.LineBot.Bot(token.Value);
             isRock.LineBot.MessageBase responseMsg = null;
+            //message collection for response multi-message 
+            List<isRock.LineBot.MessageBase> responseMsgs = 
+                new List<isRock.LineBot.MessageBase>(); 
 
             try
             {
@@ -47,23 +50,51 @@ namespace main.Controllers
                     switch (LineEvent.message.type.ToLower())
                     {
                         case "text":
+                            //add text response
                             responseMsg =
                                 new isRock.LineBot.TextMessage($"you said : {LineEvent.message.text}");
+                            responseMsgs.Add(responseMsg);
+                            //add ButtonsTemplate if user say "/Show ButtonsTemplate"
+                            if (LineEvent.message.text.ToLower().Contains("/show buttonstemplate"))
+                            {
+                                //define actions
+                                var act1 = new isRock.LineBot.MessageAction()
+                                { text = "test action1", label = "test action1" };
+                                var act2 = new isRock.LineBot.MessageAction()
+                                { text = "test action2", label = "test action2" };
+
+                                var tmp = new isRock.LineBot.ButtonsTemplate()
+                                {
+                                    text = "Button Template text",
+                                    title = "Button Template title",
+                                    thumbnailImageUrl = new Uri("https://i.imgur.com/wVpGCoP.png"), 
+                                };
+
+                                tmp.actions.Add(act1);
+                                tmp.actions.Add(act2);
+                                //add TemplateMessage into responseMsgs
+                                responseMsgs.Add(new isRock.LineBot.TemplateMessage(tmp));
+                            }
                             break;
                         case "sticker":
                             responseMsg =
                             new isRock.LineBot.StickerMessage(1, 2);
+                            responseMsgs.Add(responseMsg);
                             break;
                         default:
                             responseMsg = new isRock.LineBot.TextMessage($"None handled message type : { LineEvent.message.type}");
+                            responseMsgs.Add(responseMsg);
                             break;
                     }
                 }
                 else
+                {
                     responseMsg = new isRock.LineBot.TextMessage($"None handled event type : { LineEvent.type}");
+                    responseMsgs.Add(responseMsg);
+                }
 
                 //回覆訊息
-                bot.ReplyMessage(LineEvent.replyToken, responseMsg);
+                bot.ReplyMessage(LineEvent.replyToken, responseMsgs);
                 //response OK
                 return Ok();
             }
